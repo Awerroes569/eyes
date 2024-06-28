@@ -5,10 +5,6 @@ const { app, BrowserWindow } = require('electron');
 
 function main() {
 
-  const [state, setState] = useState('off');
-  const [time, setTime] = useState(0);
-  const [timer, setTimer] = useState(null);
-  
   // create new window
   let mainWindow = new BrowserWindow({
     webPreferences: {
