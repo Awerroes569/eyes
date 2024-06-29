@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { render } from 'react-dom';
-const { formatTime } = require('./utils.js');
+const { formatTime, playBell } = require('./utils.js');
+const { settings } = require('./settings.js');
 
 const App = () => {
+
+  const workTime = settings.workTime;
+  const restTime = settings.restTime;
+  
   const [status, setStatus] = useState('off');
-  const [time, setTime] = useState(20);  // 20 seconds for demo purposes
+  const [time, setTime] = useState(workTime);
   const [timer, setTimer] = useState(null);
 
   const startTimer = () => {
@@ -17,14 +22,12 @@ const App = () => {
     const newTimer = setInterval(() => {
       setTime((prevTime) => {
         if (prevTime <= 1) {
-          //clearInterval(newTimer);
-          //setTimer(null);
           setStatus((prevStatus) => {
               currStatus = prevStatus === 'work' ? 'rest' : 'work';
               return prevStatus === 'work' ? 'rest' : 'work';
             }
           );
-          return currStatus === 'rest' ? 10 : 20; // 20 seconds break or 20 minutes work (1200 seconds)
+          return currStatus === 'rest' ? restTime : workTime; // 20 seconds break or 20 minutes work (1200 seconds)
         }
         console.log(prevTime-1);
         return prevTime - 1;
@@ -40,7 +43,7 @@ const App = () => {
       setTimer(null);
     }
     setStatus('off');
-    setTime(20); // Resetting time for demo
+    setTime(workTime); 
   };
 
   useEffect(() => {
@@ -50,6 +53,12 @@ const App = () => {
       }
     };
   }, [timer]);
+
+  useEffect(() => {
+    if (status !== 'off') {
+      playBell();
+    }
+  }, [status]);
 
   return (
     <div>
@@ -64,18 +73,52 @@ const App = () => {
           </p>
         </div>
       )}
-      {status === 'work' && <img src="./images/work.png" alt="Work" />}
-      {status === 'rest' && <img src="./images/rest.png" alt="Rest" />}
-      {status !== 'off' && (
+      {
+        status === 'work'
+        &&
+        <img
+          src="./images/work.png"
+          alt="Work"
+        />
+      }
+      {
+        status === 'rest'
+        &&
+        <img
+          src="./images/rest.png"
+          alt="Rest"
+        />
+      }
+      {
+        status !== 'off'
+        &&
+        (
         <div className="timer">
           {formatTime(time)}
         </div>
-      )}
-      {status === 'off' ? (
-        <button className="btn" onClick={startTimer}>Start</button>
-      ) : (
-        <button className="btn" onClick={stopTimer}>Stop</button>
-      )}
+        )
+      }
+      {
+        status === 'off'
+        ? 
+        (
+          <button
+            className="btn"
+            onClick={startTimer}
+          >
+              Start
+          </button>
+        )
+        :
+        (
+          <button
+            className="btn"
+            onClick={stopTimer}
+          >
+            Stop
+          </button>
+        )
+      }
       <button
         className="btn btn-close" 
         onClick={() => window.close()}

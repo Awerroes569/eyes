@@ -4,6 +4,12 @@ const formatTime = (time) => {
     return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 };
 
+const playBell = () => {
+    const bell = new Audio('./sounds/bell.wav');
+    bell.play();
+  };
+
 module.exports = {
     formatTime,
+    playBell,
   };
